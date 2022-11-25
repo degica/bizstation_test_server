@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require "bizstation/test/server"
+require 'rspec'
+require 'rack/test'
+require_relative '../lib/bizstation_test_server'
+require_relative 'lib/bizstation_test_server_spec'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
