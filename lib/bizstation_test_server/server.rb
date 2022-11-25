@@ -4,7 +4,11 @@ require 'erb'
 
 module BizstationTestServer
   class Server < Sinatra::Base
-    configure :production, :development do
+    configure do
+      set :list_template, ERB.new(File.read(
+        BizstationTestServer.root + '/lib/bizstation_test_server/erb/file_list.xml.erb'
+      ))
+
       set :zengin_dir, BizstationTestServer.root + '/zengin_files'
     end
 
@@ -14,14 +18,15 @@ module BizstationTestServer
 
     get '/File/List' do
       files = Dir[settings.zengin_dir + '/*'].map { |name| File.open(name) }
-
-      template_path = BizstationTestServer.root + '/lib/bizstation_test_server/erb/file_list.xml.erb'
-      template = ERB.new(File.read(template_path))
-
-      template.result_with_hash(files: files).gsub(/^\s+\n/, '')
+      render(:list_template, files: files)
     end
 
     private
+
+    def render(template_name, opts)
+      template = settings.send(template_name)
+      template.result_with_hash(opts).gsub(/^\s+\n/, '')
+    end
 
     def write_files
       FileUtils.mkdir_p(settings.zengin_dir)
