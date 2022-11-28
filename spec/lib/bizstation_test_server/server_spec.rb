@@ -60,13 +60,25 @@ RSpec.describe BizstationTestServer::Server do
       post '/File/Put', {file: zengin_file}
 
       filenames = Dir[zengin_files_dir + '/*']
-
       expect(filenames).to include(receipt_name_regex)
 
       receipt_filename = filenames.find { |name| name[receipt_name_regex] }
       receipt = File.read(receipt_filename).force_encoding('SHIFT_JIS')
 
       expect(receipt).to eq(example_receipt_zengin_file)
+    end
+
+    it 'creates a result file' do
+      header 'X-Filename', "TFS20200109_00001"
+      post '/File/Put', {file: zengin_file}
+
+      filenames = Dir[zengin_files_dir + '/*']
+      expect(filenames).to include(result_name_regex)
+
+      result_filename = filenames.find { |name| name[result_name_regex] }
+      result = File.read(result_filename).force_encoding('SHIFT_JIS')
+
+      expect(result).to eq(example_result_zengin_file)
     end
   end
 end
