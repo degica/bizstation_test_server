@@ -25,16 +25,16 @@ RSpec.describe BizstationTestServer::Server do
       expect(last_response.body).to eq <<~XML
         <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
         <FileListResult>
-            <FileInfo>
-              <FileName>TFS20200701_00001_010961721004A</FileName>
-              <CreatedDate>#{now.strftime('%Y-%m-%d%M:%S')}</CreatedDate>
-              <FileSize>726</FileSize>
-            </FileInfo>
-            <FileInfo>
-              <FileName>TFS20200701_00001_010961721004B</FileName>
-              <CreatedDate>#{now.strftime('%Y-%m-%d%M:%S')}</CreatedDate>
-              <FileSize>726</FileSize>
-            </FileInfo>
+          <FileInfo>
+            <FileName>TFS20200701_00001_010961721004A</FileName>
+            <CreatedDate>#{now.strftime('%Y-%m-%d%M:%S')}</CreatedDate>
+            <FileSize>726</FileSize>
+          </FileInfo>
+          <FileInfo>
+            <FileName>TFS20200701_00001_010961721004B</FileName>
+            <CreatedDate>#{now.strftime('%Y-%m-%d%M:%S')}</CreatedDate>
+            <FileSize>726</FileSize>
+          </FileInfo>
         </FileListResult>
       XML
     end

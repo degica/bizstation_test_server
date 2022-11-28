@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <FileListResult>
-  <% files.each do |file| %>
-    <FileInfo>
-      <FileName><%= File.basename(file.path) %></FileName>
-      <CreatedDate><%= file.birthtime.strftime('%Y-%m-%d%M:%S') %></CreatedDate>
-      <FileSize><%= file.size %></FileSize>
-    </FileInfo>
-  <%end%>
+<% files.each do |file| %>
+  <FileInfo>
+    <FileName><%= File.basename(file.path) %></FileName>
+    <CreatedDate><%= file.birthtime.strftime('%Y-%m-%d%M:%S') %></CreatedDate>
+    <FileSize><%= file.size %></FileSize>
+  </FileInfo>
+<%end%>
 </FileListResult>

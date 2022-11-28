@@ -41,7 +41,7 @@ module BizstationTestServer
 
     def render(template_name, opts)
       template = settings.send(template_name)
-      template.result_with_hash(opts).gsub(/^\s+\n/, '')
+      template.result_with_hash(opts).gsub(/^\n/, '')
     end
   end
 end
