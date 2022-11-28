@@ -9,6 +9,10 @@ module BizstationTestServer
         BizstationTestServer.root + '/lib/bizstation_test_server/erb/file_list.xml.erb'
       ))
 
+      set :put_template, ERB.new(File.read(
+        BizstationTestServer.root + '/lib/bizstation_test_server/erb/file_put.xml.erb'
+      ))
+
       set :zengin_dir, BizstationTestServer.root + '/zengin_files'
     end
 
@@ -21,16 +25,23 @@ module BizstationTestServer
       render(:list_template, files: files)
     end
 
+    post '/File/Put' do
+      filename = request.env['HTTP_X_FILENAME']
+      contents = params['file']['tempfile'].open.read
+
+      generator = ZenginFileGenerator.new(filename, contents, settings.zengin_dir)
+
+      generator.create_receipt
+      generator.create_result
+
+      render(:put_template, filename: filename)
+    end
+
     private
 
     def render(template_name, opts)
       template = settings.send(template_name)
       template.result_with_hash(opts).gsub(/^\s+\n/, '')
-    end
-
-    def write_files
-      FileUtils.mkdir_p(settings.zengin_dir)
-      File.write("#{settings.zengin_dir}/joske.txt", 'Joske gaat naar de kermis')
     end
   end
 end

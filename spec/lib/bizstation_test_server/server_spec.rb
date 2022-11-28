@@ -11,7 +11,7 @@ RSpec.describe BizstationTestServer::Server do
   before { FileUtils.rm_f(Dir.glob(zengin_files_dir + '/*')) }
   after { FileUtils.rm_f(Dir.glob(zengin_files_dir + '/*')) }
 
-  describe 'get /File/List' do
+  describe 'GET /File/List' do
     it "Shows an XML list of the files" do
       now = Time.now
       FileUtils.copy(example_files_dir + '/receipt_zengin_file.txt',
@@ -37,6 +37,36 @@ RSpec.describe BizstationTestServer::Server do
             </FileInfo>
         </FileListResult>
       XML
+    end
+  end
+
+  describe 'POST /File/Put' do
+    let(:zengin_file) do
+       Rack::Test::UploadedFile.new(
+        StringIO.new(example_submitted_zengin_file),
+        'multipart/form-data',
+        # The following two arguments don't really matter as the server does not do anything with
+        # them. However, they need to be there or Rack won't accept a StringIO as the file.
+        false,
+        original_filename: 'foobar.zengin'
+      )
+    end
+
+    let(:receipt_name_regex) { /TFS20200109_00001_\d+A/ }
+    let(:result_name_regex) { /TFS20200109_00001_\d+B/ }
+
+    it 'creates a receipt file' do
+      header 'X-Filename', "TFS20200109_00001"
+      post '/File/Put', {file: zengin_file}
+
+      filenames = Dir[zengin_files_dir + '/*']
+
+      expect(filenames).to include(receipt_name_regex)
+
+      receipt_filename = filenames.find { |name| name[receipt_name_regex] }
+      receipt = File.read(receipt_filename).force_encoding('SHIFT_JIS')
+
+      expect(receipt).to eq(example_receipt_zengin_file)
     end
   end
 end

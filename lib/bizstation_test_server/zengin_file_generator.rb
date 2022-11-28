@@ -1,17 +1,18 @@
 module BizstationTestServer
   class ZenginFileGenerator
 
-    def initialize(submitted_filename, submitted_file_contents)
+    def initialize(submitted_filename, submitted_file_contents, response_files_dir)
+      @response_files_dir = response_files_dir
       @submitted_filename = submitted_filename
       @submitted_file_contents = submitted_file_contents.force_encoding('SHIFT_JIS')
     end
 
-    def generate_receipt
-      [ generate_filename(:receipt), generate_receipt_contents ]
+    def create_receipt
+      File.write("#{@response_files_dir}/#{generate_filename(:receipt)}", generate_receipt_contents)
     end
 
-    def generate_result
-      [ generate_filename(:result), generate_result_contents ]
+    def create_result
+      File.write("#{@response_files_dir}/#{generate_filename(:result)}", generate_result_contents)
     end
 
     # When we submit a zengin file with bank transfer to BizStation, they will
