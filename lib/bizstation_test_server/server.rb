@@ -25,6 +25,16 @@ module BizstationTestServer
       render(:list_template, files: files)
     end
 
+    get '/File/Get' do
+      begin
+        path = "#{settings.zengin_dir}/#{sanitize_filename(params['filename'])}"
+        File.read(path)
+      rescue Errno::ENOENT
+        status 404
+        ''
+      end
+    end
+
     post '/File/Put' do
       filename = request.env['HTTP_X_FILENAME']
       contents = params['file']['tempfile'].open.read
@@ -38,6 +48,10 @@ module BizstationTestServer
     end
 
     private
+
+    def sanitize_filename(filename)
+      filename.gsub(/^.*(\\|\/)/, '')
+    end
 
     def render(template_name, opts)
       template = settings.send(template_name)

@@ -13,11 +13,8 @@ RSpec.describe BizstationTestServer::Server do
 
   describe 'GET /File/List' do
     it "Shows an XML list of the files" do
-      now = Time.now
-      FileUtils.copy(example_files_dir + '/receipt_zengin_file.txt',
-                zengin_files_dir + '/TFS20200701_00001_010961721004A')
-      FileUtils.copy(example_files_dir + '/result_zengin_file.txt',
-                zengin_files_dir + '/TFS20200701_00001_010961721004B')
+      place_example_receipt_file
+      place_example_result_file
 
       get '/File/List'
 
@@ -37,6 +34,27 @@ RSpec.describe BizstationTestServer::Server do
           </FileInfo>
         </FileListResult>
       XML
+    end
+  end
+
+  describe 'GET /File/Get' do
+    context 'with a correct filename in the request parameters' do
+      it 'returns the file contents' do
+        place_example_receipt_file
+
+        get '/File/Get', filename: 'TFS20200701_00001_010961721004A'
+
+        expect(last_response.body.force_encoding('SHIFT_JIS')).to eq(example_receipt_zengin_file)
+      end
+    end
+
+    context 'with a filename that does not exist in the request parameters' do
+      it 'returns a 404 status' do
+        get '/File/Get', filename: 'Half-Life 3'
+
+        expect(last_response.status).to eq 404
+        expect(last_response.body).to be_empty
+      end
     end
   end
 

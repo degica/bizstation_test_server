@@ -38,3 +38,13 @@ def get_example_zengin_file(filename)
   contents = File.open(File.dirname(__FILE__) + '/example_zengin_files/' + filename).read
   contents.force_encoding('SHIFT_JIS')
 end
+
+def place_example_receipt_file
+  FileUtils.copy(example_files_dir + '/receipt_zengin_file.txt',
+                 zengin_files_dir + '/TFS20200701_00001_010961721004A')
+end
+
+def place_example_result_file
+  FileUtils.copy(example_files_dir + '/result_zengin_file.txt',
+                 zengin_files_dir + '/TFS20200701_00001_010961721004B')
+end
