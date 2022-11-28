@@ -41,10 +41,16 @@ RSpec.describe BizstationTestServer::Server do
     context 'with a correct filename in the request parameters' do
       it 'returns the file contents' do
         place_example_receipt_file
-
         get '/File/Get', filename: 'TFS20200701_00001_010961721004A'
 
         expect(last_response.body.force_encoding('SHIFT_JIS')).to eq(example_receipt_zengin_file)
+      end
+
+      it 'deletes the file' do
+        place_example_receipt_file
+        get '/File/Get', filename: 'TFS20200701_00001_010961721004A'
+
+        expect(File.exists?(zengin_files_dir + '/TFS20200701_00001_010961721004B')).to be false
       end
     end
 

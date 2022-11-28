@@ -28,7 +28,11 @@ module BizstationTestServer
     get '/File/Get' do
       begin
         path = "#{settings.zengin_dir}/#{sanitize_filename(params['filename'])}"
-        File.read(path)
+        contents = File.read(path)
+
+        File.delete(path)
+
+        contents
       rescue Errno::ENOENT
         status 404
         ''
