@@ -21,3 +21,20 @@ RSpec.configure do |config|
     c.syntax = :expect
   end
 end
+
+def example_submitted_zengin_file
+  get_example_zengin_file("submitted_zengin_file.txt")
+end
+
+def example_receipt_zengin_file
+  get_example_zengin_file("receipt_zengin_file.txt")
+end
+
+def example_result_zengin_file
+  get_example_zengin_file("result_zengin_file.txt")
+end
+
+def get_example_zengin_file(filename)
+  contents = File.open(File.dirname(__FILE__) + '/example_zengin_files/' + filename).read
+  contents.force_encoding('SHIFT_JIS')
+end

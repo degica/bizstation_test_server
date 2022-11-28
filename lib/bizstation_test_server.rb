@@ -4,4 +4,5 @@ module BizstationTestServer
   end
 end
 
+require_relative 'bizstation_test_server/zengin_file_generator'
 require_relative 'bizstation_test_server/server'
