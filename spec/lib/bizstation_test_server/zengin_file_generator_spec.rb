@@ -1,29 +1,46 @@
 RSpec.describe BizstationTestServer::ZenginFileGenerator do
-  describe "#generate_receipt" do
-    it "returns an both the receipt filename and contents as a 2 element array" do
-      service = described_class.new("TFS20200110_00001", example_submitted_zengin_file)
+  subject do
+    described_class.new("TFS20200109_00001", example_submitted_zengin_file, zengin_files_dir)
+  end
 
-      filename, contents = service.generate_receipt
+  let(:receipt_name_regex) { /TFS20200109_00001_\d+A/ }
+  let(:result_name_regex) { /TFS20200109_00001_\d+B/ }
 
-      expect(filename).to match(/TFS20200110_00001_\d+A/)
-      expect(contents).to eq service.generate_receipt_contents
+  before { FileUtils.rm_f(Dir.glob(zengin_files_dir + '/*')) }
+  after { FileUtils.rm_f(Dir.glob(zengin_files_dir + '/*')) }
+
+  describe "#create_receipt" do
+    it "creates the receipt file" do
+      subject.create_receipt
+
+      filenames = Dir[zengin_files_dir + '/*']
+      expect(filenames).to include(receipt_name_regex)
+
+      receipt_filename = filenames.find { |name| name[receipt_name_regex] }
+      receipt = File.read(receipt_filename).force_encoding('SHIFT_JIS')
+
+      expect(receipt).to eq(example_receipt_zengin_file)
     end
   end
 
-  describe "#generate_result" do
-    it "returns an both the result filename and contents as a 2 element array" do
-      service = described_class.new("TFS20200110_00001", example_submitted_zengin_file)
+  describe "#create_result" do
+    it "creates the result file" do
+      subject.create_result
 
-      filename, contents = service.generate_result
+      filenames = Dir[zengin_files_dir + '/*']
+      expect(filenames).to include(result_name_regex)
 
-      expect(filename).to match(/TFS20200110_00001_\d+B/)
-      expect(contents).to eq service.generate_result_contents
+      result_filename = filenames.find { |name| name[result_name_regex] }
+      result = File.read(result_filename).force_encoding('SHIFT_JIS')
+
+      expect(result).to eq(example_result_zengin_file)
     end
   end
 
   describe "#generate_filename" do
     subject do
-      described_class.new("TFS20200110_00001", "foobar").generate_filename(response_type)
+      described_class.new("TFS20200110_00001", "foobar", zengin_files_dir)
+                     .generate_filename(response_type)
     end
 
     context "with a receipt" do
@@ -54,14 +71,14 @@ RSpec.describe BizstationTestServer::ZenginFileGenerator do
 
   describe "#generate_receipt_contents" do
     it "fills in the 000 codes on each line indicating a successful receipt" do
-      service = described_class.new('foobar', example_submitted_zengin_file)
+      service = described_class.new('foobar', example_submitted_zengin_file, zengin_files_dir)
       expect(service.generate_receipt_contents).to eq example_receipt_zengin_file
     end
   end
 
   describe "#generate_result_contents" do
     it "fills in the 000 codes on each line indicating a successful result" do
-      service = described_class.new('foobar', example_submitted_zengin_file)
+      service = described_class.new('foobar', example_submitted_zengin_file, zengin_files_dir)
       expect(service.generate_result_contents).to eq example_result_zengin_file
     end
   end

@@ -48,3 +48,12 @@ def place_example_result_file
   FileUtils.copy(example_files_dir + '/result_zengin_file.txt',
                  zengin_files_dir + '/TFS20200701_00001_010961721004B')
 end
+
+# TODO: Get this from the config instead
+def zengin_files_dir
+  BizstationTestServer.root + '/spec/zengin_files'
+end
+
+def example_files_dir
+  BizstationTestServer.root + '/spec/example_zengin_files'
+end

@@ -3,16 +3,14 @@ def app
 end
 
 RSpec.describe BizstationTestServer::Server do
-  # TODO: Get this from the config instead
-  let(:zengin_files_dir) { BizstationTestServer.root + '/spec/zengin_files' }
-  let(:example_files_dir) { BizstationTestServer.root + '/spec/example_zengin_files' }
-
   # TODO: Refactor to be DRY
   before { FileUtils.rm_f(Dir.glob(zengin_files_dir + '/*')) }
   after { FileUtils.rm_f(Dir.glob(zengin_files_dir + '/*')) }
 
   describe 'GET /File/List' do
     it "Shows an XML list of the files" do
+      # TODO: Make this time independent
+      now = Time.now
       place_example_receipt_file
       place_example_result_file
 
