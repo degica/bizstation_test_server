@@ -55,10 +55,12 @@ RSpec.describe BizstationTestServer::Server do
     let(:receipt_name_regex) { /TFS20200109_00001_\d+A/ }
     let(:result_name_regex) { /TFS20200109_00001_\d+B/ }
 
-    it 'creates a receipt file' do
+    before do
       header 'X-Filename', "TFS20200109_00001"
       post '/File/Put', {file: zengin_file}
+    end
 
+    it 'creates a receipt file' do
       filenames = Dir[zengin_files_dir + '/*']
       expect(filenames).to include(receipt_name_regex)
 
@@ -69,9 +71,6 @@ RSpec.describe BizstationTestServer::Server do
     end
 
     it 'creates a result file' do
-      header 'X-Filename', "TFS20200109_00001"
-      post '/File/Put', {file: zengin_file}
-
       filenames = Dir[zengin_files_dir + '/*']
       expect(filenames).to include(result_name_regex)
 
@@ -79,6 +78,17 @@ RSpec.describe BizstationTestServer::Server do
       result = File.read(result_filename).force_encoding('SHIFT_JIS')
 
       expect(result).to eq(example_result_zengin_file)
+    end
+
+    it 'returns an XML response with the filename' do
+      expect(last_response).to be_ok
+      expect(last_response.body).to eq <<~XML
+        <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+        <FilePutResult>
+          <PathName>/SEND</PathName>
+          <FileName>TFS20200109_00001</FileName>
+        </FilePutResult>
+      XML
     end
   end
 end
