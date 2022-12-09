@@ -3,6 +3,7 @@ module BizstationTestServer
 
     def initialize(submitted_filename, submitted_file_contents, response_files_dir)
       @response_files_dir = response_files_dir
+      FileUtils.mkdir_p(@response_files_dir)
       @submitted_filename = submitted_filename
       @submitted_file_contents = submitted_file_contents.force_encoding('SHIFT_JIS')
     end
